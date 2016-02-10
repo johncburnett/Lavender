@@ -26,14 +26,37 @@ def main():
         supersets.append(superset)
 
     while True:
-        chain = raw_input("Enter a sequence: ")
+        chain = raw_input("<~lavender~>$ ")
         tokens = chain.split()
+
+        if check(tokens):
+            continue
+
         if tokens[0] == 'exit':
             return
-        if tokens[0] == 'generate':
+
+        elif tokens[0] == 'generate':
             generate()
-            continue
-        execute(tokens)
+
+        elif tokens[0] == 'add':
+            new_set = eval(tokens[1])
+            new_superset = Superset(new_set, cardinalities)
+            sets.append(new_set)
+            supersets.append(new_superset)
+
+        elif tokens [0] == 'list':
+            for x in sets:
+                print x
+
+        elif tokens[0] == 'clear':
+            del sets[:]
+            del supersets[:]
+            del sequence[:]
+            del seq_i[:]
+            graph = Graph()
+
+        else:
+            execute(tokens)
 
 
 def execute(tokens):
@@ -58,7 +81,12 @@ def execute(tokens):
                 continue
             j += 1
 
-    print sequence
+    to_print = list()
+    for x in sequence:
+        y = list(x)
+        y.sort()
+        to_print.append(y)
+    print to_print
     return
 
 
@@ -79,5 +107,15 @@ def bestFit(pset, collections):
                 best_fit = superset
                 max_tones = len(common_tones)
     return best_fit
+
+
+def check(tokens):
+    for x in tokens:
+        if x.isdigit():
+            if int(x) > len(sets)-1:
+                print "Error: There are only " + str(len(sets)) + " sets in the pset bank."
+                return True
+    return False
+
 
 main()
