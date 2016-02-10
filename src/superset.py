@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import abjad
+# import abjad
 from itertools import combinations
 
 class Superset():
@@ -8,7 +8,7 @@ class Superset():
     def __init__(self, pset, cardinalities):
         self.pset = pset
         self.collections = []
-        self.score = abjad.Score()
+        # self.score = abjad.Score()
 
         # cardinalities = [6,7,8]
         for n in cardinalities:
@@ -80,20 +80,20 @@ def printCollection(collection):
     return
 
 
-def notateCollection(subset, collection):
-    abjad.abjad_configuration.set_default_accidental_spelling('flats')
-    subset_staff   = abjad.Staff()
-    superset_staff = abjad.Staff()
+# def notateCollection(subset, collection):
+    # abjad.abjad_configuration.set_default_accidental_spelling('flats')
+    # subset_staff   = abjad.Staff()
+    # superset_staff = abjad.Staff()
 
-    chord = abjad.Chord(subset, (1,1))
-    subset_staff.append(chord)
+    # chord = abjad.Chord(subset, (1,1))
+    # subset_staff.append(chord)
 
-    for pset in collection:
-        chord = abjad.Chord(pset, (1,1))
-        superset_staff.append(chord)
+    # for pset in collection:
+        # chord = abjad.Chord(pset, (1,1))
+        # superset_staff.append(chord)
 
-    score = abjad.Score([subset_staff, superset_staff])
-    for chord in score[1]:
-        abjad.topleveltools.mutate(chord).respell_with_flats()
-    return score
+    # score = abjad.Score([subset_staff, superset_staff])
+    # for chord in score[1]:
+        # abjad.topleveltools.mutate(chord).respell_with_flats()
+    # return score
 
