@@ -2,7 +2,7 @@
 
 import sys
 # from abjad import *
-from random import choice
+from random import choice, shuffle
 from graph import Graph
 from superset import Superset
 
@@ -57,12 +57,33 @@ def main():
             sets.append(new_set)
             supersets.append(new_superset)
 
+        elif tokens[0] == 'add_random':
+            new_set = randomPset()
+            new_superset = Superset(new_set, cardinalities)
+            sets.append(new_set)
+            supersets.append(new_superset)
+
         elif tokens[0] == 'list':
             for x in sets:
                 print x
 
         elif tokens[0] == 'clear':
             clear()
+
+        elif tokens[0] == 'populate':
+            if len(tokens) < 3:
+                print "Error: populate takes 2 arguments (num_sets, train)"
+                continue
+            n = int(tokens[1])
+            m = int(tokens[2])
+            populate(n, m)
+
+        elif tokens[0] == 'train':
+            if len(tokens) < 2:
+                print "Error: populate takes 1 argument (n)"
+                continue
+            n = int(tokens[1])
+            train(n)
 
         else:
             execute(tokens)
@@ -118,6 +139,28 @@ def generate(n):
     return
 
 
+def populate(n, m):
+    clear()
+    [ sets.append(randomPset()) for i in range(n) ]
+
+    for pset in sets:
+        superset = Superset(pset, cardinalities)
+        supersets.append(superset)
+
+    train(m)
+
+
+def train(n):
+    for i in range(n):
+        chain = list()
+        r = range(len(sets))
+        shuffle(r)
+        [ chain.append(r.pop()) for i in range(5) ]
+        tokens = makeTokens(chain)
+        execute(tokens)
+    return
+
+
 def makeTokens(l):
     l = [ str(x) for x in l]
     op = ['->'] * len(l)
@@ -141,12 +184,25 @@ def bestFit(pset, collections):
 
 
 def check(tokens):
+    exclude = ['generate', 'populate', 'train']
+
     for x in tokens:
         if x.isdigit():
-            if int(x) > len(sets)-1 and tokens[0] != 'generate':
+            if int(x) > len(sets)-1 and tokens[0] not in exclude:
                 print "Error: There are only " + str(len(sets)) + " sets in the pset bank."
                 return True
     return False
+
+
+def randomPset():
+    tones = range(12)
+    shuffle(tones)
+    pset = list()
+    for i in range(choice([3,4,5])):
+        pset.append(tones.pop())
+    pset.sort()
+    return pset
+
 
 def clear():
     del sets[:]

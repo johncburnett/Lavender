@@ -12,10 +12,8 @@ class Graph():
             self.nodes[data] = list()
 
     def connectNodes(self, a, b):
-        if a not in self.nodes:
-            self.addNode(a)
-        if b not in self.nodes:
-            self.addNode(b)
+        self.addNode(a)
+        self.addNode(b)
         self.nodes[a].append(b)
 
     def clear(self):
@@ -27,7 +25,7 @@ class Graph():
     def walk(self, n):
         key = choice(self.nodes.keys())
         path = [key]
-        for i in range(1,n):
+        for i in range(n):
             key = choice(self.nodes[key])
             path.append(key)
         return path
