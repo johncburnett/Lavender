@@ -37,7 +37,12 @@ def main():
             return
 
         elif tokens[0] == 'generate':
-            generate()
+            if len(tokens) < 3:
+                print "Error: generate takes 2 arguments (start, end)"
+                continue
+            start = int(tokens[1])
+            end = int(tokens[2])
+            generate(start, end)
 
         elif tokens[0] == 'add':
             new_set = eval(tokens[1])
@@ -88,9 +93,10 @@ def execute(tokens):
     return
 
 
-def generate():
-    start = 0
-    end = max(range(len(sets)))
+def generate(start, end):
+    if start not in range(len(sets)) or end not in range(len(sets)):
+        print "Error: Index out of bounds."
+        return
     paths = graph.paths(start, end)
     path = choice(paths)
 
