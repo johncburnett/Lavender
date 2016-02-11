@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-from abjad import *
+# from abjad import *
+from random import choice
 from graph import Graph
 from superset import Superset
 
@@ -13,9 +14,9 @@ sets = [
 cardinalities = [6, 7, 8]
 
 supersets = list()
-graph = Graph()
 sequence = list()
 seq_i = list()
+graph = Graph()
 
 
 def main():
@@ -44,16 +45,12 @@ def main():
             sets.append(new_set)
             supersets.append(new_superset)
 
-        elif tokens [0] == 'list':
+        elif tokens[0] == 'list':
             for x in sets:
                 print x
 
         elif tokens[0] == 'clear':
-            del sets[:]
-            del supersets[:]
-            del sequence[:]
-            del seq_i[:]
-            graph = Graph()
+            clear()
 
         else:
             execute(tokens)
@@ -66,8 +63,8 @@ def execute(tokens):
             index = int(e)
 
             if i == 0:
-                sequence = list()
-                seq_i = list()
+                del sequence[:]
+                del seq_i[:]
                 sequence.append(set(sets[index]))
                 seq_i.append(index)
                 continue
@@ -76,9 +73,10 @@ def execute(tokens):
             if operator == '->':
                 sequence.append(bestFit(sequence[j], supersets[index].collections))
                 seq_i.append(index)
-                graph.connectNodes(supersets[index], supersets[seq_i[j-1]])
+                graph.connectNodes(seq_i[j], seq_i[j+1])
             elif operator == '!':
                 continue
+
             j += 1
 
     to_print = list()
@@ -91,7 +89,16 @@ def execute(tokens):
 
 
 def generate():
-    print graph.nodes
+    start = 0
+    end = max(range(len(sets)))
+    paths = graph.paths(start, end)
+    path = choice(paths)
+
+    path = [ str(x) for x in path ]
+    operators = ['->'] * len(path)
+    tokens = [ item for pair in zip(path,operators) for item in pair ]
+    tokens.pop()
+    execute(tokens)
     return
 
 
@@ -116,6 +123,13 @@ def check(tokens):
                 print "Error: There are only " + str(len(sets)) + " sets in the pset bank."
                 return True
     return False
+
+def clear():
+    del sets[:]
+    del supersets[:]
+    del sequence[:]
+    del seq_i[:]
+    graph.clear()
 
 
 main()
