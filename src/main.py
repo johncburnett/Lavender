@@ -36,13 +36,20 @@ def main():
         if tokens[0] == 'exit':
             return
 
-        elif tokens[0] == 'generate':
+        if tokens[0] == 'generate':
+            if len(tokens) < 2:
+                print "Error: generate takes 1 argument (n)"
+                continue
+            n = int(tokens[1])
+            generate(n)
+
+        elif tokens[0] == 'path':
             if len(tokens) < 3:
-                print "Error: generate takes 2 arguments (start, end)"
+                print "Error: path takes 2 arguments (start, end)"
                 continue
             start = int(tokens[1])
             end = int(tokens[2])
-            generate(start, end)
+            path(start, end)
 
         elif tokens[0] == 'add':
             new_set = eval(tokens[1])
@@ -93,19 +100,30 @@ def execute(tokens):
     return
 
 
-def generate(start, end):
+def path(start, end):
     if start not in range(len(sets)) or end not in range(len(sets)):
         print "Error: Index out of bounds."
         return
     paths = graph.paths(start, end)
     path = choice(paths)
-
-    path = [ str(x) for x in path ]
-    operators = ['->'] * len(path)
-    tokens = [ item for pair in zip(path,operators) for item in pair ]
-    tokens.pop()
+    tokens = makeTokens(path)
     execute(tokens)
     return
+
+
+def generate(n):
+    path = graph.walk(n)
+    tokens = makeTokens(path)
+    execute(tokens)
+    return
+
+
+def makeTokens(l):
+    l = [ str(x) for x in l]
+    op = ['->'] * len(l)
+    tokens = [ item for pair in zip(l,op) for item in pair ]
+    tokens.pop()
+    return tokens
 
 
 def bestFit(pset, collections):
@@ -125,7 +143,7 @@ def bestFit(pset, collections):
 def check(tokens):
     for x in tokens:
         if x.isdigit():
-            if int(x) > len(sets)-1:
+            if int(x) > len(sets)-1 and tokens[0] != 'generate':
                 print "Error: There are only " + str(len(sets)) + " sets in the pset bank."
                 return True
     return False

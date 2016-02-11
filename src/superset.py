@@ -10,7 +10,6 @@ class Superset():
         self.collections = []
         # self.score = abjad.Score()
 
-        # cardinalities = [6,7,8]
         for n in cardinalities:
             supersets = generateCollections(set(pset), n)
             self.collections.append(supersets)

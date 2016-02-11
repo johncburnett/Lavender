@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from superset import Superset
+from random import choice
 
 class Graph():
 
@@ -23,6 +23,14 @@ class Graph():
 
     def paths(self, start, end):
         return findPaths(self.nodes, start, end)
+
+    def walk(self, n):
+        key = choice(self.nodes.keys())
+        path = [key]
+        for i in range(1,n):
+            key = choice(self.nodes[key])
+            path.append(key)
+        return path
 
 def findPaths(graph, start, end, path=[]):
     path = path + [start]
