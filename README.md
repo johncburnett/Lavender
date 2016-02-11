@@ -9,9 +9,12 @@ Lavender comes with four pitch sets already loaded into its bank. To make a chai
 ```
 Lavender will output a chain of supersets for you. Each number refers to the index of the pitch set in your bank. To see the bank, run the command `list`. To add a pitch set to the bank, run `add [0,5,9,11]` (using a set of your choosing). You can clear the bank with the `clear` command.
 
-The power of Lavender lies in the `generate n m` command. With each chain that the user inputs, Lavender adds to a network of harmonic relations. The `generate` command outputs a random walk through this network. Just pass it start and end points. This functionality will be expanded very soon.
+The power of Lavender lies in the `generate <n>` command. With each chain that the user inputs, Lavender adds to a network of harmonic relations. The `generate` command outputs a random walk through this network. Just pass it the length of the chain you would like. This functionality will be expanded very soon.
+
+There is also the `path <start> <end>` command that will return a random path between two specified sets.
 
 ### Dependencies
+* Python 2.7.10
 * [Abjad](http://abjad.mbrsi.org/) (not yet, but soon)
 
 ### What's to Come
