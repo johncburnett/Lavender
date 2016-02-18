@@ -53,15 +53,21 @@ def main():
 
         elif tokens[0] == 'add':
             new_set = eval(tokens[1])
+            new_set.sort()
             new_superset = Superset(new_set, cardinalities)
             sets.append(new_set)
             supersets.append(new_superset)
 
-        elif tokens[0] == 'add_random':
-            new_set = randomPset()
-            new_superset = Superset(new_set, cardinalities)
-            sets.append(new_set)
-            supersets.append(new_superset)
+        elif tokens[0] == 'add_r':
+            if len(tokens) == 1:
+                n = 1
+            else:
+                n = int(tokens[1])
+            for i in range(n):
+                new_set = randomPset()
+                new_superset = Superset(new_set, cardinalities)
+                sets.append(new_set)
+                supersets.append(new_superset)
 
         elif tokens[0] == 'list':
             for x in sets:
@@ -155,14 +161,14 @@ def train(n):
         chain = list()
         r = range(len(sets))
         shuffle(r)
-        [ chain.append(r.pop()) for i in range(5) ]
+        [ chain.append(r.pop()) for i in range(len(sets)) ]
         tokens = makeTokens(chain)
         execute(tokens)
     return
 
 
 def makeTokens(l):
-    l = [ str(x) for x in l]
+    l = [ str(x) for x in l ]
     op = ['->'] * len(l)
     tokens = [ item for pair in zip(l,op) for item in pair ]
     tokens.pop()
@@ -184,7 +190,7 @@ def bestFit(pset, collections):
 
 
 def check(tokens):
-    exclude = ['generate', 'populate', 'train']
+    exclude = ['generate', 'populate', 'train', 'add_r']
 
     for x in tokens:
         if x.isdigit():
