@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-# from abjad import *
+from abjad import *
 from random import choice, shuffle
 from graph import Graph
 from superset import Superset
@@ -91,6 +91,12 @@ def main():
             n = int(tokens[1])
             train(n)
 
+        elif tokens[0] == 'notate':
+            notate()
+
+        elif tokens[0] == 'nodes':
+            print graph.nodes
+
         else:
             execute(tokens)
 
@@ -104,17 +110,34 @@ def execute(tokens):
             if i == 0:
                 del sequence[:]
                 del seq_i[:]
-                sequence.append(set(sets[index]))
+                collection = choice(supersets[index].collections[1:])
+                superset = choice(collection)
+                sequence.append(superset)
                 seq_i.append(index)
+
                 continue
 
             operator = tokens[i-1]
             if operator == '->':
-                sequence.append(bestFit(sequence[j], supersets[index].collections))
+                best_fit = bestFit(sequence[j], supersets[index].collections)
+                if len(best_fit) == 0:
+                    break
+                sequence.append(best_fit)
                 seq_i.append(index)
                 graph.connectNodes(seq_i[j], seq_i[j+1])
             elif operator == '!':
-                continue
+                worst_fit = worstFit(sequence[j], supersets[index].collections)
+                if len(worst_fit) == 0:
+                    break
+                sequence.append(worst_fit)
+                seq_i.append(index)
+                graph.connectNodes(seq_i[j], seq_i[j+1])
+            elif operator == '-':
+                collection = choice(supersets[index].collections[1:])
+                superset = choice(collection)
+                sequence.append(superset)
+                seq_i.append(index)
+                graph.connectNodes(seq_i[j], seq_i[j+1])
 
             j += 1
 
@@ -179,13 +202,27 @@ def bestFit(pset, collections):
     best_fit = set()
     max_tones = 0
 
-    for collection in collections:
-        for superset in collection:
-            pset = set(pset)
-            common_tones = pset.intersection(superset)
-            if len(common_tones) > max_tones:
-                best_fit = superset
-                max_tones = len(common_tones)
+    collection = choice(collections[1:])
+    for superset in collection:
+        pset = set(pset)
+        common_tones = pset.intersection(superset)
+        if len(common_tones) > max_tones:
+            best_fit = superset
+            max_tones = len(common_tones)
+    return best_fit
+
+
+def worstFit(pset, collections):
+    min_tones = 13
+    best_fit = set()
+
+    collection = choice(collections[1:])
+    for superset in collection:
+        pset = set(pset)
+        common_tones = pset.intersection(superset)
+        if len(common_tones) < min_tones:
+            best_fit = superset
+            min_tone = len(common_tones)
     return best_fit
 
 
@@ -216,6 +253,18 @@ def clear():
     del sequence[:]
     del seq_i[:]
     graph.clear()
+
+
+def notate():
+    abjad_configuration.set_default_accidental_spelling('sharps')
+    staves = [Staff(), Staff()]
+    for i in range(len(sequence)):
+        subset = Chord(sets[seq_i[i]], (1,1))
+        superset = Chord(sequence[i], (1,1))
+        staves[0].append(subset)
+        staves[1].append(superset)
+    score = Score(staves)
+    show(score)
 
 
 main()
